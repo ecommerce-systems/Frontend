@@ -31,4 +31,4 @@ jobs:
 
       - name: Upload to Google Drive
         run: |
-          rclone copy ./dist remote:ci-builds/ecommerce --progress
+          rclone copy ./dist gdrive:ci-builds/ecommerce --progress
