@@ -16,14 +16,12 @@ jobs:
 
       - name: Configure rclone
         run: |
-          echo "${{ secrets.RCLONE_CONF }}" > rclone.conf
           mkdir -p ~/.config/rclone
-          mv rclone.conf ~/.config/rclone/rclone.conf
+          echo "${{ secrets.RCLONE_CONF_B64 }}" | base64 -d > ~/.config/rclone/rclone.conf
 
       - name: Download build artifact from Google Drive
         run: |
-
-          rclone copy remote:ci-builds/project-name/dist.zip ./dist.zip --progress
+          rclone copy gdrive:ci-builds/ecommerce/dist.zip ./dist.zip --progress
 
       - name: Unzip into Nginx html folder
         run: |
