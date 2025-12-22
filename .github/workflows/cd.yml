@@ -14,6 +14,12 @@ jobs:
         run: |
           curl https://rclone.org/install.sh | sudo bash
 
+      - name: Debug rclone.conf (head)
+        run: |
+          mkdir -p /home/runner/.config/rclone
+          echo "${{ secrets.RCLONE_CONF }}" > /home/runner/.config/rclone/rclone.conf
+          head -n 20 /home/runner/.config/rclone/rclone.conf
+
       - name: Configure rclone
         run: |
           echo "${{ secrets.RCLONE_CONF }}" > rclone.conf
