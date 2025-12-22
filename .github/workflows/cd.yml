@@ -1,0 +1,30 @@
+name: CD Pipeline
+
+on:
+  workflow_run:
+    workflows: ["CI Pipeline"]
+    types:
+      - completed
+
+jobs:
+  deploy:
+    runs-on: self-hosted
+    steps:
+      - name: Install rclone
+        run: |
+          curl https://rclone.org/install.sh | sudo bash
+
+      - name: Configure rclone
+        run: |
+          echo "${{ secrets.RCLONE_CONF }}" > rclone.conf
+          mkdir -p ~/.config/rclone
+          mv rclone.conf ~/.config/rclone/rclone.conf
+
+      - name: Download build artifact from Google Drive
+        run: |
+
+          rclone copy remote:ci-builds/project-name/dist.zip ./dist.zip --progress
+
+      - name: Unzip into Nginx html folder
+        run: |
+          unzip -o dist.zip -d /home/smalllab/Docker/ecommerce/nginx/html
