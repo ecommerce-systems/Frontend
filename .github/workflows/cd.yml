@@ -10,11 +10,6 @@ jobs:
   deploy:
     runs-on: self-hosted
     steps:
-      - name: Install rclone
-        run: |
-          apt update
-          apt install -y rclone
-
       - name: Configure rclone
         run: |
           mkdir -p ~/.config/rclone
