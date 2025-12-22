@@ -24,10 +24,7 @@ jobs:
 
       - name: Configure rclone
         run: |
-
-          echo "${{ secrets.RCLONE_CONF }}" > rclone.conf
-          mkdir -p ~/.config/rclone
-          mv rclone.conf ~/.config/rclone/rclone.conf
+          echo "${{ secrets.RCLONE_CONF }}" > ~/.config/rclone/rclone.conf
 
       - name: Upload to Google Drive
         run: |
