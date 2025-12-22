@@ -24,7 +24,8 @@ jobs:
 
       - name: Configure rclone
         run: |
-          echo "${{ secrets.RCLONE_CONF }}" > ~/.config/rclone/rclone.conf
+          mkdir -p /home/runner/.config/rclone
+          echo "${{ secrets.RCLONE_CONF }}" > /home/runner/.config/rclone/rclone.conf
 
       - name: Upload to Google Drive
         run: |
