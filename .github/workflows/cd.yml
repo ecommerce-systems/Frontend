@@ -12,8 +12,8 @@ jobs:
     steps:
       - name: Install rclone
         run: |
-          sudo apt update
-          sudo apt install -y rclone
+          apt update
+          apt install -y rclone
 
       - name: Configure rclone
         run: |
