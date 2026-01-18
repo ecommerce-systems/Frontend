@@ -62,4 +62,17 @@ axiosInstance.interceptors.response.use(
   }
 );
 
+export const searchProductNames = (keyword) => {
+  return axiosInstance.get('/api/v2/products/search', {
+    params: { keyword },
+  });
+};
+
+export const searchProductsPaginated = (keyword, page = 0, size = 10) => {
+  return axiosInstance.get('/api/v2/products/search/results', {
+    params: { keyword, page, size },
+  });
+};
+
+
 export default axiosInstance;
