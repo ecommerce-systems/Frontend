@@ -1,5 +1,4 @@
 import axios from "axios";
-import { getCookie } from "./utils/auth";
 
 export const axiosInstance = axios.create({
   baseURL: import.meta.env.VITE_APP_BACKEND_URL,
@@ -27,10 +26,6 @@ axiosInstance.interceptors.request.use(
     const accessToken = getAccessToken();
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
-      const csrfToken = getCookie("csrftoken");
-      if (config.method !== "get" && csrfToken) {
-        config.headers["X-CSRFToken"] = csrfToken;
-      }
     }
     return config;
   },
@@ -49,11 +44,11 @@ axiosInstance.interceptors.response.use(
       originalRequest._retry = true;
       try {
         const refreshResponse = await axios.post(
-          `${import.meta.env.VITE_APP_BACKEND_URL}/auth/refresh`,
+          `${import.meta.env.VITE_APP_BACKEND_URL}/api/v2/auth/refresh`,
           {},
           { withCredentials: true }
         );
-        const newAccessToken = refreshResponse.data.access;
+        const newAccessToken = refreshResponse.data.accessToken;
         setAccessToken(newAccessToken);
         axiosInstance.defaults.headers.common[
           "Authorization"
