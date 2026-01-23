@@ -40,13 +40,16 @@ function CoPurchaseList() {
       {loading && <p>Loading co-purchased products...</p>}
       {error && <p style={{ color: 'red' }}>{error}</p>}
       {coPurchases.length > 0 ? (
-        <ul>
+        <div className="product-list">
           {coPurchases.map((product) => (
-            <li key={product.productId}>
-              {product.prodName} - {product.price} ({product.productTypeName})
-            </li>
+            <div key={product.productId} className="product-card">
+              <img src={product.imageUrl} alt={product.prodName} style={{width: '100%'}}/>
+              <h4>{product.prodName}</h4>
+              <p>{product.detailDesc}</p>
+              <p>Price: ${product.price}</p>
+            </div>
           ))}
-        </ul>
+        </div>
       ) : (
         !loading && !error && productId && <p>No co-purchased products found for ID {productId}.</p>
       )}
