@@ -26,6 +26,8 @@ axiosInstance.interceptors.request.use(
     const accessToken = getAccessToken();
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
+    } else {
+      delete config.headers.Authorization;
     }
     return config;
   },
@@ -50,9 +52,6 @@ axiosInstance.interceptors.response.use(
         );
         const newAccessToken = refreshResponse.data.accessToken;
         setAccessToken(newAccessToken);
-        axiosInstance.defaults.headers.common[
-          "Authorization"
-        ] = `Bearer ${newAccessToken}`;
         return axiosInstance(originalRequest);
       } catch (refreshError) {
         setAccessToken(null);
