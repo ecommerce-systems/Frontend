@@ -1,22 +1,24 @@
-import React, { useState } from 'react';
-import axiosInstance from '../../api';
+import React, { useState } from "react";
+import axiosInstance from "../../api";
 
 function CoPurchaseList() {
-  const [productId, setProductId] = useState('');
+  const [productId, setProductId] = useState("");
   const [coPurchases, setCoPurchases] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
 
   const fetchCoPurchases = async () => {
     if (!productId) {
-      setError('Please enter a Product ID.');
+      setError("Please enter a Product ID.");
       return;
     }
     setLoading(true);
-    setError('');
+    setError("");
     setCoPurchases([]);
     try {
-      const response = await axiosInstance.get(`/api/v2/co-purchase/${productId}`);
+      const response = await axiosInstance.get(
+        `/api/v2/co-purchase/${productId}`,
+      );
       setCoPurchases(response.data);
     } catch (err) {
       setError(`Failed to fetch co-purchased products for ID ${productId}.`);
@@ -38,21 +40,22 @@ function CoPurchaseList() {
       <button onClick={fetchCoPurchases}>Get Co-purchased</button>
 
       {loading && <p>Loading co-purchased products...</p>}
-      {error && <p style={{ color: 'red' }}>{error}</p>}
-      {coPurchases.length > 0 ? (
-        <div className="product-list">
-          {coPurchases.map((product) => (
-            <div key={product.productId} className="product-card">
-              <img src={product.imageUrl} alt={product.prodName} style={{width: '100%'}}/>
-              <h4>{product.prodName}</h4>
-              <p>{product.detailDesc}</p>
-              <p>Price: ${product.price}</p>
-            </div>
-          ))}
-        </div>
-      ) : (
-        !loading && !error && productId && <p>No co-purchased products found for ID {productId}.</p>
-      )}
+      {error && <p style={{ color: "red" }}>{error}</p>}
+
+      <div className="product-list">
+        {coPurchases.map((product) => (
+          <div key={product.productId} className="product-card">
+            <img
+              src={product.imageUrl}
+              alt={product.prodName}
+              style={{ width: "100%" }}
+            />
+            <h4>{product.prodName}</h4>
+            <p>{product.detailDesc}</p>
+            <p>Price: ${product.price}</p>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
