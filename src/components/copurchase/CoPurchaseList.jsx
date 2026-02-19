@@ -6,7 +6,6 @@ function CoPurchaseList() {
   const [coPurchases, setCoPurchases] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
   const fetchCoPurchases = async () => {
     if (!productId) {
       setError("Please enter a Product ID.");
