@@ -11,7 +11,7 @@ function ProductList({ products }) {
       <ul>
         {products.map((product) => (
           <li key={product.productId}>
-            {product.prodName} - {product.price}
+            {product.productId} - {product.prodName} - {product.price}
           </li>
         ))}
       </ul>
