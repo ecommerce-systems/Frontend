@@ -5,15 +5,16 @@ import ProductPage from './pages/ProductPage';
 import OrderPage from './pages/OrderPage';
 import UserPage from './pages/UserPage';
 import CoPurchasePage from './pages/CoPurchasePage';
+import ResponseTimeToast from './components/ResponseTimeToast';
 
 function App() {
   return (
     <Router>
-      <div>
+      <div id="app">
         <nav>
           <ul>
             <li>
-              <Link to="/auth">Auth</Link>
+              <Link to="/auth">Authentication</Link>
             </li>
             <li>
               <Link to="/products">Products</Link>
@@ -22,15 +23,13 @@ function App() {
               <Link to="/orders">Orders</Link>
             </li>
             <li>
-              <Link to="/user">User</Link>
+              <Link to="/user">User Profile</Link>
             </li>
             <li>
               <Link to="/co-purchase">Co-purchase</Link>
             </li>
           </ul>
         </nav>
-
-        <hr />
 
         <Routes>
           <Route path="/auth" element={<AuthPage />} />
@@ -39,6 +38,8 @@ function App() {
           <Route path="/user" element={<UserPage />} />
           <Route path="/co-purchase" element={<CoPurchasePage />} />
         </Routes>
+
+        <ResponseTimeToast />
       </div>
     </Router>
   );
