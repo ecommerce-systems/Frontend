@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
-import { searchProductNames } from '../../api';
-import useDebounce from '../../hooks/useDebounce';
+import React, { useState, useEffect } from "react";
+import { searchProductNames } from "../../api";
+import useDebounce from "../../hooks/useDebounce";
 
 function ProductSearch({ onSearch, keyword, setKeyword }) {
   const [suggestions, setSuggestions] = useState([]);
@@ -11,10 +11,10 @@ function ProductSearch({ onSearch, keyword, setKeyword }) {
     if (debouncedKeyword) {
       setLoading(true);
       searchProductNames(debouncedKeyword)
-        .then(response => {
+        .then((response) => {
           setSuggestions(response.data);
         })
-        .catch(err => {
+        .catch((err) => {
           console.error("추천 검색어를 가져오지 못했습니다:", err);
           setSuggestions([]);
         })
@@ -27,7 +27,7 @@ function ProductSearch({ onSearch, keyword, setKeyword }) {
   }, [debouncedKeyword]);
 
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter') {
+    if (e.key === "Enter") {
       onSearch(keyword);
       setSuggestions([]);
     }
@@ -40,77 +40,70 @@ function ProductSearch({ onSearch, keyword, setKeyword }) {
   };
 
   return (
-    <div style={{ position: 'relative' }}>
-<<<<<<< HEAD
-      <h3 style={{ marginBottom: '1rem' }}>상품 통합 검색</h3>
-=======
-      <h3 style={{ marginBottom: '1rem' }}>Search Products</h3>
->>>>>>> d2ff52d
-      <div style={{ display: 'flex', gap: '0.5rem' }}>
+    <div style={{ position: "relative" }}>
+      <h3 style={{ marginBottom: "1rem" }}>상품 통합 검색</h3>
+
+      <div style={{ display: "flex", gap: "0.5rem" }}>
         <input
           type="text"
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
           onKeyDown={handleKeyDown}
-<<<<<<< HEAD
           placeholder="상품명, 브랜드, 카테고리 등 검색..."
           style={{ marginBottom: 0 }}
         />
         <button onClick={() => onSearch(keyword)} style={{ marginTop: 0 }}>
-          검색하기
-=======
-          placeholder="Search for items, brands, and more..."
-          style={{ marginBottom: 0 }}
-        />
-        <button onClick={() => onSearch(keyword)} style={{ marginTop: 0 }}>
-          Search
->>>>>>> d2ff52d
+          검색하기 style={{ marginBottom: 0 }}
         </button>
       </div>
-      
+
       {loading && (
-        <div style={{ 
-          position: 'absolute', 
-          right: '100px', 
-          top: '55px', 
-          color: '#64748b', 
-          fontSize: '0.875rem' 
-        }}>
-<<<<<<< HEAD
+        <div
+          style={{
+            position: "absolute",
+            right: "100px",
+            top: "55px",
+            color: "#64748b",
+            fontSize: "0.875rem",
+          }}
+        >
           검색 중...
-=======
-          Searching...
->>>>>>> d2ff52d
         </div>
       )}
 
       {suggestions.length > 0 && (
-        <ul style={{
-          position: 'absolute',
-          top: '100%',
-          left: 0,
-          right: '105px',
-          background: 'white',
-          border: '1px solid #e2e8f0',
-          borderRadius: '8px',
-          boxShadow: '0 10px 15px -3px rgb(0 0 0 / 0.1)',
-          listStyle: 'none',
-          padding: '0.5rem 0',
-          margin: '4px 0 0 0',
-          zIndex: 10
-        }}>
+        <ul
+          style={{
+            position: "absolute",
+            top: "100%",
+            left: 0,
+            right: "105px",
+            background: "white",
+            border: "1px solid #e2e8f0",
+            borderRadius: "8px",
+            boxShadow: "0 10px 15px -3px rgb(0 0 0 / 0.1)",
+            listStyle: "none",
+            padding: "0.5rem 0",
+            margin: "4px 0 0 0",
+            zIndex: 10,
+          }}
+        >
           {suggestions.map((suggestion, index) => (
-            <li 
-              key={index} 
+            <li
+              key={index}
               onClick={() => handleSuggestionClick(suggestion)}
               style={{
-                padding: '0.75rem 1rem',
-                cursor: 'pointer',
-                transition: 'background 0.2s',
-                fontSize: '0.95rem'
+                padding: "0.75rem 1rem",
+                cursor: "pointer",
+                transition: "background 0.2s",
+                fontSize: "0.95rem",
               }}
-              onMouseOver={(e) => e.currentTarget.style.background = '#f8fafc'}
-              onMouseOut={(e) => e.currentTarget.style.background = 'transparent'}
+              onMouseOver={(e) =>
+                (e.currentTarget.style.background = "#f8fafc")
+              }
+              onMouseOut={(e) =>
+                (e.currentTarget.style.background = "transparent")
+              }
             >
               {suggestion}
             </li>
