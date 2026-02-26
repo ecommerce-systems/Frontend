@@ -13,8 +13,8 @@ function OrderPage() {
   return (
     <div>
       <div style={{ marginBottom: '2rem' }}>
-        <h1>Order Operations</h1>
-        <p style={{ color: 'var(--text-muted)' }}>Manage your purchases and track order history.</p>
+        <h1>주문 및 배송 관리</h1>
+        <p style={{ color: 'var(--text-muted)' }}>구매 내역을 확인하고 새로운 주문을 진행할 수 있습니다.</p>
       </div>
       
       <div className="container">
@@ -25,7 +25,7 @@ function OrderPage() {
           <div className="card">
             <OrderList key={refreshKey} />
           </div>
-          <div className="card">
+          <div className="card" style={{ display: 'none' }}>
             <OrderDetail />
           </div>
         </div>

@@ -29,9 +29,11 @@ const ResponseTimeToast = () => {
     <div className="rt-toast-container">
       {logs.map((log) => (
         <div key={log.id} className={`rt-toast ${log.error ? 'error' : 'success'}`}>
-          <span className="rt-method">{log.method}</span>
-          <span className="rt-url">{log.url.split('?')[0]}</span>
-          <span className="rt-ms">{log.duration}ms</span>
+          <span className="rt-method" style={{ fontSize: '0.7rem', opacity: 0.8 }}>{log.method}</span>
+          <span className="rt-url" style={{ maxWidth: '120px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+            {log.url.split('/').pop().split('?')[0] || 'API'}
+          </span>
+          <span className="rt-ms">응답: {log.duration}ms</span>
         </div>
       ))}
     </div>

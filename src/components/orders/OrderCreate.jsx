@@ -2,13 +2,12 @@ import React, { useState, useEffect } from 'react';
 import axiosInstance from '../../api';
 import { useCart } from '../../context/CartContext';
 
-function OrderCreate() {
+function OrderCreate({ onOrderCreated }) {
   const { cartItems, clearCart } = useCart();
   const [items, setItems] = useState([{ productId: '', quantity: '' }]);
   const [result, setResult] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Sync with cart items if available
   useEffect(() => {
     if (cartItems.length > 0) {
       setItems(cartItems.map(item => ({
@@ -44,18 +43,22 @@ function OrderCreate() {
       })).filter(item => !isNaN(item.productId) && !isNaN(item.quantity) && item.quantity > 0);
 
       if (orderItems.length === 0) {
-        setResult('<p style="color: red;">Please add valid product items.</p>');
+        setResult('<p style="color: var(--error-color);">유효한 상품 아이디와 수량을 입력해주세요.</p>');
         setLoading(false);
         return;
       }
 
       const response = await axiosInstance.post('/api/v1/orders', { items: orderItems });
-      setResult(`<p>✅ Order created successfully!</p><pre style="background: #f8fafc; padding: 1rem; border-radius: 8px; font-size: 0.8rem;">${JSON.stringify(response.data, null, 2)}</pre>`);
+      setResult(`<p style="color: var(--success-color); font-weight: bold;">✅ 주문이 성공적으로 완료되었습니다!</p>`);
       setItems([{ productId: '', quantity: '' }]);
-      clearCart(); // Clear cart on success
-      if (onOrderCreated) onOrderCreated(); // Trigger list refresh
+      clearCart();
+      
+      // 자동 리프레시 실행
+      if (onOrderCreated) {
+        onOrderCreated();
+      }
     } catch (error) {
-      setResult(`<p style="color: red;">❌ Order creation failed: ${error.response?.data?.message || error.message}</p>`);
+      setResult(`<p style="color: var(--error-color);">❌ 주문 실패: ${error.response?.data?.message || '네트워크 오류가 발생했습니다.'}</p>`);
       console.error(error);
     } finally {
       setLoading(false);
@@ -64,7 +67,7 @@ function OrderCreate() {
 
   return (
     <div>
-      <h3 style={{ marginBottom: '1.5rem' }}>Create New Order</h3>
+      <h3 style={{ marginBottom: '1.5rem' }}>새 주문 작성</h3>
       
       {cartItems.length > 0 && (
         <div style={{ 
@@ -75,7 +78,7 @@ function OrderCreate() {
           border: '1px solid #bfdbfe',
           fontSize: '0.9rem'
         }}>
-          🛒 <strong>Cart Sync:</strong> {cartItems.length} items from your cart are ready to be ordered.
+          🛒 <strong>장바구니 연동:</strong> 장바구니에 담긴 {cartItems.length}개의 상품이 자동으로 입력되었습니다.
         </div>
       )}
 
@@ -91,20 +94,20 @@ function OrderCreate() {
             borderRadius: '8px'
           }}>
             <div style={{ flex: 2 }}>
-              <label style={{ fontSize: '0.75rem', color: '#64748b', display: 'block' }}>Product ID</label>
+              <label style={{ fontSize: '0.75rem', color: '#64748b', display: 'block' }}>상품 ID</label>
               <input
                 type="text"
-                placeholder="ID"
+                placeholder="아이디 입력"
                 value={item.productId}
                 onChange={(e) => handleItemChange(index, 'productId', e.target.value)}
                 style={{ marginBottom: 0 }}
               />
             </div>
             <div style={{ flex: 1 }}>
-              <label style={{ fontSize: '0.75rem', color: '#64748b', display: 'block' }}>Qty</label>
+              <label style={{ fontSize: '0.75rem', color: '#64748b', display: 'block' }}>수량</label>
               <input
                 type="number"
-                placeholder="Qty"
+                placeholder="수량"
                 value={item.quantity}
                 onChange={(e) => handleItemChange(index, 'quantity', e.target.value)}
                 min="1"
@@ -122,7 +125,7 @@ function OrderCreate() {
                 minWidth: '40px'
               }}
             >
-              ×
+              삭제
             </button>
           </div>
         ))}
@@ -133,14 +136,14 @@ function OrderCreate() {
             onClick={handleAddItem}
             style={{ flex: 1, background: '#f1f5f9', color: '#475569' }}
           >
-            + Add Product
+            + 상품 추가
           </button>
           <button 
             type="submit" 
             disabled={loading} 
             style={{ flex: 2 }}
           >
-            {loading ? 'Processing...' : 'Place Order Now'}
+            {loading ? '주문 처리 중...' : '지금 바로 주문하기'}
           </button>
         </div>
       </form>

@@ -17,19 +17,19 @@ function App() {
           <nav>
             <ul>
               <li>
-                <Link to="/auth">Authentication</Link>
+                <Link to="/auth">로그인/인증</Link>
               </li>
               <li>
-                <Link to="/products">Products</Link>
+                <Link to="/products">상품검색</Link>
               </li>
               <li>
-                <Link to="/orders">Orders</Link>
+                <Link to="/orders">주문현황</Link>
               </li>
               <li>
-                <Link to="/user">User Profile</Link>
+                <Link to="/user">마이페이지</Link>
               </li>
               <li>
-                <Link to="/co-purchase">Co-purchase</Link>
+                <Link to="/co-purchase">공동구매</Link>
               </li>
             </ul>
           </nav>

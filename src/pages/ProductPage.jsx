@@ -28,7 +28,7 @@ function ProductPage() {
       setTotalPages(totalPages);
       setCurrentPage(number);
     } catch (err) {
-      setError("Failed to search products.");
+      setError("상품 검색 중 오류가 발생했습니다.");
       setSearchResults([]);
       console.error(err);
     } finally {
@@ -45,7 +45,7 @@ function ProductPage() {
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
-        <h1>Product Discovery</h1>
+        <h1>상품 탐색 및 검색</h1>
       </div>
 
       <div className="card" style={{ marginBottom: '2rem' }}>
@@ -68,7 +68,7 @@ function ProductPage() {
               animation: 'spin 1s linear infinite',
               margin: '0 auto 1rem auto'
             }}></div>
-            <p style={{ color: 'var(--text-muted)' }}>Fetching latest products...</p>
+            <p style={{ color: 'var(--text-muted)' }}>상품 정보를 불러오고 있습니다...</p>
           </div>
         )}
         
@@ -104,17 +104,17 @@ function ProductPage() {
                   disabled={currentPage === 0}
                   style={{ background: '#f1f5f9', color: '#475569' }}
                 >
-                  Previous
+                  이전
                 </button>
                 <span style={{ fontWeight: 600, color: '#64748b' }}>
-                  Page {currentPage + 1} of {totalPages}
+                  {currentPage + 1} / {totalPages} 페이지
                 </span>
                 <button
                   onClick={() => handlePaginate(currentPage + 1)}
                   disabled={currentPage >= totalPages - 1}
                   style={{ background: '#f1f5f9', color: '#475569' }}
                 >
-                  Next
+                  다음
                 </button>
               </div>
             )}

@@ -9,11 +9,10 @@ function OrderList() {
   const fetchOrders = async () => {
     try {
       const response = await axiosInstance.get('/api/v1/orders');
-      // Sort by date descending (newest first)
       const sortedOrders = response.data.sort((a, b) => new Date(b.orderDate) - new Date(a.orderDate));
       setOrders(sortedOrders);
     } catch (err) {
-      setError('Failed to fetch orders.');
+      setError('주문 내역을 불러오는데 실패했습니다.');
       console.error(err);
     } finally {
       setLoading(false);
@@ -26,7 +25,7 @@ function OrderList() {
 
   if (loading) return (
     <div style={{ textAlign: 'center', padding: '2rem' }}>
-      <p style={{ color: 'var(--text-muted)' }}>Loading order history...</p>
+      <p style={{ color: 'var(--text-muted)' }}>주문 내역을 불러오는 중...</p>
     </div>
   );
   
@@ -39,12 +38,12 @@ function OrderList() {
   return (
     <div>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
-        <h3 style={{ margin: 0 }}>My Orders</h3>
+        <h3 style={{ margin: 0 }}>최근 주문 현황</h3>
         <button 
           onClick={fetchOrders} 
           style={{ background: '#f1f5f9', color: '#475569', padding: '0.4rem 0.8rem', fontSize: '0.8rem' }}
         >
-          Refresh
+          새로고침
         </button>
       </div>
 
@@ -58,7 +57,7 @@ function OrderList() {
               background: 'white'
             }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '0.5rem', borderBottom: '1px solid #f1f5f9', paddingBottom: '0.5rem' }}>
-                <span style={{ fontWeight: 700, color: 'var(--primary-color)' }}>ID: #{order.orderId}</span>
+                <span style={{ fontWeight: 700, color: 'var(--primary-color)' }}>주문번호: #{order.orderId}</span>
                 <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>
                   {new Date(order.orderDate).toLocaleString()}
                 </span>
@@ -67,7 +66,7 @@ function OrderList() {
               <div style={{ margin: '0.75rem 0' }}>
                 {order.orderDetails.map((detail, idx) => (
                   <div key={idx} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.9rem', marginBottom: '0.25rem' }}>
-                    <span style={{ color: 'var(--text-main)' }}>• {detail.productName} x {detail.quantity}</span>
+                    <span style={{ color: 'var(--text-main)' }}>• {detail.productName} ({detail.quantity}개)</span>
                     <span style={{ fontWeight: 600 }}>₩{detail.price?.toLocaleString()}</span>
                   </div>
                 ))}
@@ -82,10 +81,10 @@ function OrderList() {
                   color: order.status === 'COMPLETED' ? '#166534' : '#854d0e',
                   fontWeight: 600
                 }}>
-                  {order.status}
+                  {order.status === 'COMPLETED' ? '결제완료' : order.status}
                 </span>
                 <span style={{ fontWeight: 800, color: 'var(--text-main)' }}>
-                  Total: ₩{order.orderDetails.reduce((acc, curr) => acc + (curr.price * curr.quantity), 0).toLocaleString()}
+                  총 결제금액: ₩{order.orderDetails.reduce((acc, curr) => acc + (curr.price * curr.quantity), 0).toLocaleString()}
                 </span>
               </div>
             </div>
