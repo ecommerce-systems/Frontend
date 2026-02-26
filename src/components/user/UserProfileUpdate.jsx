@@ -7,7 +7,6 @@ function UserProfileUpdate() {
   const [result, setResult] = useState('');
   const [loading, setLoading] = useState(false);
 
-  // Optionally fetch current profile data to pre-fill the form
   useEffect(() => {
     const fetchCurrentProfile = async () => {
       try {
@@ -15,7 +14,7 @@ function UserProfileUpdate() {
         setPhone(response.data.phone || '');
         setAddress(response.data.address || '');
       } catch (err) {
-        console.error('Failed to fetch current user profile for update form:', err);
+        console.error('기존 프로필 정보를 불러오는데 실패했습니다:', err);
       }
     };
     fetchCurrentProfile();
@@ -26,10 +25,10 @@ function UserProfileUpdate() {
     setResult('');
     setLoading(true);
     try {
-      const response = await axiosInstance.put('/api/v1/users/me', { phone, address });
-      setResult(`<p>✅ Profile updated successfully!</p><pre>${JSON.stringify(response.data, null, 2)}</pre>`);
+      await axiosInstance.put('/api/v1/users/me', { phone, address });
+      setResult(`<p style="color: var(--success-color); font-weight: bold;">✅ 프로필 정보가 성공적으로 수정되었습니다!</p>`);
     } catch (error) {
-      setResult(`<p style="color: red;">❌ Profile update failed: ${error.response?.data?.message || error.message}</p>`);
+      setResult(`<p style="color: var(--error-color);">❌ 프로필 수정 실패: 입력 정보를 다시 확인해주세요.</p>`);
       console.error(error);
     } finally {
       setLoading(false);
@@ -38,25 +37,33 @@ function UserProfileUpdate() {
 
   return (
     <div>
-      <h3>Update My Profile</h3>
+      <h3 style={{ marginBottom: '1.5rem' }}>내 프로필 수정</h3>
       <form onSubmit={handleSubmit}>
-        <input
-          type="text"
-          value={phone}
-          onChange={(e) => setPhone(e.target.value)}
-          placeholder="Phone Number"
-        />
-        <input
-          type="text"
-          value={address}
-          onChange={(e) => setAddress(e.target.value)}
-          placeholder="Address"
-        />
-        <button type="submit" disabled={loading}>
-          {loading ? 'Updating...' : 'Update Profile'}
+        <div style={{ marginBottom: '1rem' }}>
+          <label style={{ fontSize: '0.85rem', color: 'var(--text-muted)', display: 'block', marginBottom: '0.4rem' }}>전화번호</label>
+          <input
+            type="text"
+            value={phone}
+            onChange={(e) => setPhone(e.target.value)}
+            placeholder="010-0000-0000"
+            style={{ marginBottom: 0 }}
+          />
+        </div>
+        <div style={{ marginBottom: '1rem' }}>
+          <label style={{ fontSize: '0.85rem', color: 'var(--text-muted)', display: 'block', marginBottom: '0.4rem' }}>주소</label>
+          <input
+            type="text"
+            value={address}
+            onChange={(e) => setAddress(e.target.value)}
+            placeholder="상세 주소를 입력하세요"
+            style={{ marginBottom: 0 }}
+          />
+        </div>
+        <button type="submit" disabled={loading} style={{ width: '100%', background: 'var(--primary-color)' }}>
+          {loading ? '수정 처리 중...' : '프로필 정보 저장'}
         </button>
       </form>
-      <div dangerouslySetInnerHTML={{ __html: result }} />
+      <div style={{ marginTop: '1rem', fontSize: '0.9rem' }} dangerouslySetInnerHTML={{ __html: result }} />
     </div>
   );
 }
