@@ -9,14 +9,14 @@ function ProductList({ products }) {
   if (!products || products.length === 0) {
     return (
       <div style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
-        <p>No products found matching your search.</p>
+        <p>검색 결과와 일치하는 상품이 없습니다.</p>
       </div>
     );
   }
 
   return (
     <div>
-      <h3 style={{ marginBottom: '1.5rem' }}>Available Products</h3>
+      <h3 style={{ marginBottom: '1.5rem' }}>판매 중인 상품</h3>
       <div className="product-list">
         {products.map((product) => (
           <div key={product.productId} className="product-card" style={{ cursor: 'pointer' }}>
@@ -47,7 +47,7 @@ function ProductList({ products }) {
                   }}
                 />
               ) : (
-                <div style={{ color: '#94a3b8', fontSize: '0.875rem' }}>No Image</div>
+                <div style={{ color: '#94a3b8', fontSize: '0.875rem' }}>이미지 없음</div>
               )}
             </div>
             <div onClick={() => navigate(`/products/${product.productId}`)}>
@@ -70,10 +70,10 @@ function ProductList({ products }) {
                 onClick={(e) => {
                   e.stopPropagation();
                   addToCart(product);
-                  alert('Added to cart!');
+                  alert('장바구니에 추가되었습니다!');
                 }}
               >
-                Add to Cart
+                장바구니 담기
               </button>
             </div>
           </div>

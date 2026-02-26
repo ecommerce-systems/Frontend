@@ -53,7 +53,7 @@ function ProductSearch({ onSearch, keyword, setKeyword }) {
           style={{ marginBottom: 0 }}
         />
         <button onClick={() => onSearch(keyword)} style={{ marginTop: 0 }}>
-          검색하기 style={{ marginBottom: 0 }}
+          검색
         </button>
       </div>
 

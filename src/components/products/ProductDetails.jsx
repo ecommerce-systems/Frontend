@@ -9,7 +9,7 @@ function ProductDetails() {
 
   const fetchProductDetails = async () => {
     if (!productId) {
-      setError('Please enter a Product ID.');
+      setError('상품 ID를 입력해주세요.');
       return;
     }
     setLoading(true);
@@ -19,7 +19,7 @@ function ProductDetails() {
       const response = await axiosInstance.get(`/api/v2/products/${productId}`);
       setProduct(response.data);
     } catch (err) {
-      setError(`Failed to fetch product details for ID ${productId}.`);
+      setError(`ID ${productId}에 해당하는 상품 정보를 불러오지 못했습니다.`);
       console.error(err);
     } finally {
       setLoading(false);
@@ -28,23 +28,23 @@ function ProductDetails() {
 
   return (
     <div>
-      <h3>Product Details (V2)</h3>
+      <h3>상품 상세 정보</h3>
       <input
         type="text"
         value={productId}
         onChange={(e) => setProductId(e.target.value)}
-        placeholder="Enter Product ID"
+        placeholder="상품 ID 입력"
       />
-      <button onClick={fetchProductDetails}>Get Details</button>
+      <button onClick={fetchProductDetails}>조회하기</button>
 
-      {loading && <p>Loading product details...</p>}
+      {loading && <p>상품 정보를 불러오는 중...</p>}
       {error && <p style={{ color: 'red' }}>{error}</p>}
       {product && (
         <div>
-          <p>Name: {product.prodName}</p>
-          <p>Price: {product.price}</p>
-          <p>Image: <img src={product.imageUrl} alt={product.prodName} style={{ maxWidth: '100px' }} /></p>
-          <p>Type: {product.productTypeName}</p>
+          <p>상품명: {product.prodName}</p>
+          <p>가격: {product.price}</p>
+          <p>이미지: <img src={product.imageUrl} alt={product.prodName} style={{ maxWidth: '100px' }} /></p>
+          <p>카테고리: {product.productTypeName}</p>
         </div>
       )}
     </div>
