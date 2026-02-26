@@ -23,6 +23,7 @@ export function getAccessToken() {
 
 axiosInstance.interceptors.request.use(
   (config) => {
+    config.metadata = { startTime: new Date() };
     const accessToken = getAccessToken();
     if (accessToken) {
       config.headers.Authorization = `Bearer ${accessToken}`;
@@ -35,9 +36,30 @@ axiosInstance.interceptors.request.use(
 );
 
 axiosInstance.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    const duration = new Date() - response.config.metadata.startTime;
+    window.dispatchEvent(new CustomEvent("api-response-time", { 
+      detail: { 
+        url: response.config.url,
+        duration,
+        method: response.config.method.toUpperCase()
+      } 
+    }));
+    return response;
+  },
   async (error) => {
     const originalRequest = error.config;
+    if (originalRequest && originalRequest.metadata) {
+      const duration = new Date() - originalRequest.metadata.startTime;
+      window.dispatchEvent(new CustomEvent("api-response-time", { 
+        detail: { 
+          url: originalRequest.url,
+          duration,
+          method: originalRequest.method.toUpperCase(),
+          error: true
+        } 
+      }));
+    }
     if (
       error.response?.status === 401 &&
       originalRequest &&

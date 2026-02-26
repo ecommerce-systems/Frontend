@@ -41,18 +41,30 @@ function ProductSearch({ onSearch, keyword, setKeyword }) {
 
   return (
     <div style={{ position: 'relative' }}>
+<<<<<<< HEAD
       <h3 style={{ marginBottom: '1rem' }}>상품 통합 검색</h3>
+=======
+      <h3 style={{ marginBottom: '1rem' }}>Search Products</h3>
+>>>>>>> d2ff52d
       <div style={{ display: 'flex', gap: '0.5rem' }}>
         <input
           type="text"
           value={keyword}
           onChange={(e) => setKeyword(e.target.value)}
           onKeyDown={handleKeyDown}
+<<<<<<< HEAD
           placeholder="상품명, 브랜드, 카테고리 등 검색..."
           style={{ marginBottom: 0 }}
         />
         <button onClick={() => onSearch(keyword)} style={{ marginTop: 0 }}>
           검색하기
+=======
+          placeholder="Search for items, brands, and more..."
+          style={{ marginBottom: 0 }}
+        />
+        <button onClick={() => onSearch(keyword)} style={{ marginTop: 0 }}>
+          Search
+>>>>>>> d2ff52d
         </button>
       </div>
       
@@ -64,7 +76,11 @@ function ProductSearch({ onSearch, keyword, setKeyword }) {
           color: '#64748b', 
           fontSize: '0.875rem' 
         }}>
+<<<<<<< HEAD
           검색 중...
+=======
+          Searching...
+>>>>>>> d2ff52d
         </div>
       )}
 

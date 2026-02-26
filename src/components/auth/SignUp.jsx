@@ -14,24 +14,39 @@ function SignUp() {
     setResult('');
     try {
       const res = await axiosInstance.post('/api/v2/auth/signup', { username, password, name, phone, address });
-      setResult(`<p>✅ Signup successful for ${username}</p><pre>${JSON.stringify(res.data, null, 2)}</pre>`);
+      setResult(`<p style="color: var(--success-color); font-weight: bold;">✅ 회원가입 완료! ${username}님 가입을 축하드립니다.</p>`);
     } catch (error) {
-      setResult(`<p>❌ Signup failed: ${error.response?.data?.message || error.message}</p>`);
+      setResult(`<p style="color: var(--error-color);">❌ 회원가입 실패: 이미 존재하는 아이디이거나 입력 정보를 확인해주세요.</p>`);
     }
   };
 
   return (
     <div>
-      <h2>Sign Up</h2>
+      <h2 style={{ marginBottom: '1.5rem' }}>회원가입</h2>
       <form onSubmit={handleSubmit}>
-        <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="Username" required />
-        <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" required />
-        <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Name" required />
-        <input type="text" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Phone" required />
-        <input type="text" value={address} onChange={(e) => setAddress(e.target.value)} placeholder="Address" required />
-        <button type="submit">Sign Up</button>
+        <div style={{ marginBottom: '0.8rem' }}>
+          <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'block' }}>아이디</label>
+          <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="아이디" required style={{ marginBottom: 0 }} />
+        </div>
+        <div style={{ marginBottom: '0.8rem' }}>
+          <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'block' }}>비밀번호</label>
+          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="비밀번호" required style={{ marginBottom: 0 }} />
+        </div>
+        <div style={{ marginBottom: '0.8rem' }}>
+          <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'block' }}>이름</label>
+          <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="성함" required style={{ marginBottom: 0 }} />
+        </div>
+        <div style={{ marginBottom: '0.8rem' }}>
+          <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'block' }}>전화번호</label>
+          <input type="text" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="010-0000-0000" required style={{ marginBottom: 0 }} />
+        </div>
+        <div style={{ marginBottom: '1rem' }}>
+          <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'block' }}>주소</label>
+          <input type="text" value={address} onChange={(e) => setAddress(e.target.value)} placeholder="상세 주소" required style={{ marginBottom: 0 }} />
+        </div>
+        <button type="submit" style={{ width: '100%' }}>회원가입하기</button>
       </form>
-      <div dangerouslySetInnerHTML={{ __html: result }} />
+      <div style={{ marginTop: '1rem', fontSize: '0.9rem' }} dangerouslySetInnerHTML={{ __html: result }} />
     </div>
   );
 }

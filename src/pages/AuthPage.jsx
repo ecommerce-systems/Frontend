@@ -7,13 +7,16 @@ import RefreshToken from '../components/auth/RefreshToken';
 function AuthPage() {
   return (
     <div>
-      <h1>Auth Operations</h1>
+      <div style={{ marginBottom: '2rem' }}>
+        <h1>계정 관리 및 인증</h1>
+        <p style={{ color: 'var(--text-muted)' }}>회원가입 및 로그인을 통해 다양한 서비스를 이용해보세요.</p>
+      </div>
       <div className="container">
         <div className="card">
-          <SignUp />
+          <Login />
         </div>
         <div className="card">
-          <Login />
+          <SignUp />
         </div>
         <div className="card">
           <RefreshToken />

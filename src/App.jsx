@@ -2,45 +2,51 @@ import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import AuthPage from './pages/AuthPage';
 import ProductPage from './pages/ProductPage';
+import ProductDetailPage from './pages/ProductDetailPage';
 import OrderPage from './pages/OrderPage';
 import UserPage from './pages/UserPage';
 import CoPurchasePage from './pages/CoPurchasePage';
+import ResponseTimeToast from './components/ResponseTimeToast';
+import { CartProvider } from './context/CartContext';
 
 function App() {
   return (
-    <Router>
-      <div>
-        <nav>
-          <ul>
-            <li>
-              <Link to="/auth">Auth</Link>
-            </li>
-            <li>
-              <Link to="/products">Products</Link>
-            </li>
-            <li>
-              <Link to="/orders">Orders</Link>
-            </li>
-            <li>
-              <Link to="/user">User</Link>
-            </li>
-            <li>
-              <Link to="/co-purchase">Co-purchase</Link>
-            </li>
-          </ul>
-        </nav>
+    <CartProvider>
+      <Router>
+        <div id="app">
+          <nav>
+            <ul>
+              <li>
+                <Link to="/auth">로그인/인증</Link>
+              </li>
+              <li>
+                <Link to="/products">상품검색</Link>
+              </li>
+              <li>
+                <Link to="/orders">주문현황</Link>
+              </li>
+              <li>
+                <Link to="/user">마이페이지</Link>
+              </li>
+              <li>
+                <Link to="/co-purchase">공동구매</Link>
+              </li>
+            </ul>
+          </nav>
 
-        <hr />
+          <Routes>
+            <Route path="/auth" element={<AuthPage />} />
+            <Route path="/products" element={<ProductPage />} />
+            <Route path="/products/:productId" element={<ProductDetailPage />} />
+            <Route path="/orders" element={<OrderPage />} />
+            <Route path="/user" element={<UserPage />} />
+            <Route path="/co-purchase" element={<CoPurchasePage />} />
+          </Routes>
 
-        <Routes>
-          <Route path="/auth" element={<AuthPage />} />
-          <Route path="/products" element={<ProductPage />} />
-          <Route path="/orders" element={<OrderPage />} />
-          <Route path="/user" element={<UserPage />} />
-          <Route path="/co-purchase" element={<CoPurchasePage />} />
-        </Routes>
-      </div>
-    </Router>
+          <ResponseTimeToast />
+        </div>
+      </Router>
+    </CartProvider>
   );
 }
 
