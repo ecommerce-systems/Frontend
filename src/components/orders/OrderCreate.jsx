@@ -53,6 +53,7 @@ function OrderCreate() {
       setResult(`<p>✅ Order created successfully!</p><pre style="background: #f8fafc; padding: 1rem; border-radius: 8px; font-size: 0.8rem;">${JSON.stringify(response.data, null, 2)}</pre>`);
       setItems([{ productId: '', quantity: '' }]);
       clearCart(); // Clear cart on success
+      if (onOrderCreated) onOrderCreated(); // Trigger list refresh
     } catch (error) {
       setResult(`<p style="color: red;">❌ Order creation failed: ${error.response?.data?.message || error.message}</p>`);
       console.error(error);
