@@ -1,53 +1,63 @@
 import React, { useState } from 'react';
 import axiosInstance from '../../api';
 
+const FIELDS = [
+  { key: 'username', label: '아이디',   type: 'text',     placeholder: '사용할 아이디', autoComplete: 'username' },
+  { key: 'password', label: '비밀번호', type: 'password', placeholder: '8자 이상 권장', autoComplete: 'new-password' },
+  { key: 'name',     label: '이름',     type: 'text',     placeholder: '실명을 입력하세요' },
+  { key: 'phone',    label: '전화번호', type: 'tel',      placeholder: '010-0000-0000' },
+  { key: 'address',  label: '주소',     type: 'text',     placeholder: '배송받을 주소' },
+];
+
 function SignUp() {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
-  const [name, setName] = useState('');
-  const [phone, setPhone] = useState('');
-  const [address, setAddress] = useState('');
-  const [result, setResult] = useState('');
+  const [form,    setForm]    = useState({ username: '', password: '', name: '', phone: '', address: '' });
+  const [result,  setResult]  = useState(null);
+  const [loading, setLoading] = useState(false);
+
+  const set = (key) => (e) => setForm(f => ({ ...f, [key]: e.target.value }));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setResult('');
+    setResult(null);
+    setLoading(true);
     try {
-      const res = await axiosInstance.post('/api/v2/auth/signup', { username, password, name, phone, address });
-      setResult(`<p style="color: var(--success-color); font-weight: bold;">✅ 회원가입 완료! ${username}님 가입을 축하드립니다.</p>`);
-    } catch (error) {
-      setResult(`<p style="color: var(--error-color);">❌ 회원가입 실패: 이미 존재하는 아이디이거나 입력 정보를 확인해주세요.</p>`);
+      await axiosInstance.post('/api/v2/auth/signup', form);
+      setResult({ ok: true, msg: `${form.username}님, 가입을 축하합니다! 로그인 탭에서 로그인하세요.` });
+    } catch {
+      setResult({ ok: false, msg: '가입에 실패했습니다. 이미 사용 중인 아이디이거나 입력값을 확인해주세요.' });
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div>
-      <h2 style={{ marginBottom: '1.5rem' }}>회원가입</h2>
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: '0.8rem' }}>
-          <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'block' }}>아이디</label>
-          <input type="text" value={username} onChange={(e) => setUsername(e.target.value)} placeholder="아이디" required style={{ marginBottom: 0 }} />
+    <form onSubmit={handleSubmit} className="auth-form">
+      <div className="signup-grid">
+        {FIELDS.map(({ key, label, type, placeholder, autoComplete }) => (
+          <div className="form-group" key={key} style={{ marginBottom: '0.875rem' }}>
+            <label>{label}</label>
+            <input
+              type={type}
+              value={form[key]}
+              onChange={set(key)}
+              placeholder={placeholder}
+              required
+              autoComplete={autoComplete}
+            />
+          </div>
+        ))}
+      </div>
+
+      <button type="submit" disabled={loading} style={{ width: '100%', padding: '0.875rem', fontSize: '0.95rem', marginTop: '0.5rem' }}>
+        {loading ? '가입 처리 중...' : '회원가입 완료'}
+      </button>
+
+      {result && (
+        <div className={result.ok ? 'success-box' : 'error-box'} style={{ marginTop: '1rem' }}>
+          {result.ok ? '✅' : '⚠️'} {result.msg}
         </div>
-        <div style={{ marginBottom: '0.8rem' }}>
-          <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'block' }}>비밀번호</label>
-          <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} placeholder="비밀번호" required style={{ marginBottom: 0 }} />
-        </div>
-        <div style={{ marginBottom: '0.8rem' }}>
-          <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'block' }}>이름</label>
-          <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="성함" required style={{ marginBottom: 0 }} />
-        </div>
-        <div style={{ marginBottom: '0.8rem' }}>
-          <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'block' }}>전화번호</label>
-          <input type="text" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="010-0000-0000" required style={{ marginBottom: 0 }} />
-        </div>
-        <div style={{ marginBottom: '1rem' }}>
-          <label style={{ fontSize: '0.8rem', color: 'var(--text-muted)', display: 'block' }}>주소</label>
-          <input type="text" value={address} onChange={(e) => setAddress(e.target.value)} placeholder="상세 주소" required style={{ marginBottom: 0 }} />
-        </div>
-        <button type="submit" style={{ width: '100%' }}>회원가입하기</button>
-      </form>
-      <div style={{ marginTop: '1rem', fontSize: '0.9rem' }} dangerouslySetInnerHTML={{ __html: result }} />
-    </div>
+      )}
+    </form>
   );
 }
 

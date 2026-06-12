@@ -5,61 +5,48 @@ import { useCart } from '../../context/CartContext';
 function OrderCreate({ onOrderCreated }) {
   const { cartItems, clearCart } = useCart();
   const [items, setItems] = useState([{ productId: '', quantity: '' }]);
-  const [result, setResult] = useState('');
+  const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     if (cartItems.length > 0) {
       setItems(cartItems.map(item => ({
         productId: item.productId.toString(),
-        quantity: item.quantity
+        quantity: item.quantity,
       })));
     }
   }, [cartItems]);
 
-  const handleAddItem = () => {
-    setItems([...items, { productId: '', quantity: '' }]);
-  };
-
-  const handleItemChange = (index, field, value) => {
-    const newItems = items.map((item, i) =>
-      i === index ? { ...item, [field]: field === 'quantity' ? parseInt(value) : value } : item
-    );
-    setItems(newItems);
-  };
-
-  const handleRemoveItem = (index) => {
-    setItems(items.filter((_, i) => i !== index));
-  };
+  const addItem    = () => setItems(prev => [...prev, { productId: '', quantity: '' }]);
+  const removeItem = (i) => setItems(prev => prev.filter((_, idx) => idx !== i));
+  const changeItem = (i, field, val) =>
+    setItems(prev => prev.map((item, idx) =>
+      idx === i ? { ...item, [field]: field === 'quantity' ? parseInt(val) || '' : val } : item
+    ));
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setResult('');
+    setResult(null);
     setLoading(true);
+
+    const orderItems = items
+      .map(it => ({ productId: parseInt(it.productId), quantity: Number(it.quantity) }))
+      .filter(it => !isNaN(it.productId) && it.quantity > 0);
+
+    if (orderItems.length === 0) {
+      setResult({ ok: false, msg: '유효한 상품 ID와 수량을 입력해주세요.' });
+      setLoading(false);
+      return;
+    }
+
     try {
-      const orderItems = items.map(item => ({
-        productId: parseInt(item.productId),
-        quantity: item.quantity
-      })).filter(item => !isNaN(item.productId) && !isNaN(item.quantity) && item.quantity > 0);
-
-      if (orderItems.length === 0) {
-        setResult('<p style="color: var(--error-color);">유효한 상품 아이디와 수량을 입력해주세요.</p>');
-        setLoading(false);
-        return;
-      }
-
-      const response = await axiosInstance.post('/api/v1/orders', { items: orderItems });
-      setResult(`<p style="color: var(--success-color); font-weight: bold;">✅ 주문이 성공적으로 완료되었습니다!</p>`);
+      await axiosInstance.post('/api/v1/orders', { items: orderItems });
+      setResult({ ok: true, msg: '주문이 성공적으로 완료되었습니다!' });
       setItems([{ productId: '', quantity: '' }]);
       clearCart();
-      
-      // 자동 리프레시 실행
-      if (onOrderCreated) {
-        onOrderCreated();
-      }
-    } catch (error) {
-      setResult(`<p style="color: var(--error-color);">❌ 주문 실패: ${error.response?.data?.message || '네트워크 오류가 발생했습니다.'}</p>`);
-      console.error(error);
+      onOrderCreated?.();
+    } catch (err) {
+      setResult({ ok: false, msg: err.response?.data?.message ?? '네트워크 오류가 발생했습니다.' });
     } finally {
       setLoading(false);
     }
@@ -68,87 +55,63 @@ function OrderCreate({ onOrderCreated }) {
   return (
     <div>
       <h3 style={{ marginBottom: '1.5rem' }}>새 주문 작성</h3>
-      
+
       {cartItems.length > 0 && (
-        <div style={{ 
-          background: '#eff6ff', 
-          padding: '1rem', 
-          borderRadius: '8px', 
-          marginBottom: '1.5rem',
-          border: '1px solid #bfdbfe',
-          fontSize: '0.9rem'
-        }}>
-          🛒 <strong>장바구니 연동:</strong> 장바구니에 담긴 {cartItems.length}개의 상품이 자동으로 입력되었습니다.
+        <div className="cart-info-box">
+          🛒 장바구니 상품 {cartItems.length}개가 자동으로 입력되었습니다.
         </div>
       )}
 
       <form onSubmit={handleSubmit}>
-        {items.map((item, index) => (
-          <div key={index} style={{ 
-            display: 'flex', 
-            gap: '0.5rem', 
-            marginBottom: '0.75rem', 
-            alignItems: 'center',
-            background: '#f8fafc',
-            padding: '0.5rem',
-            borderRadius: '8px'
-          }}>
-            <div style={{ flex: 2 }}>
-              <label style={{ fontSize: '0.75rem', color: '#64748b', display: 'block' }}>상품 ID</label>
+        {items.map((item, i) => (
+          <div key={i} className="order-item-form-row">
+            <div>
+              <label>상품 ID</label>
               <input
                 type="text"
-                placeholder="아이디 입력"
+                placeholder="예: 507909001"
                 value={item.productId}
-                onChange={(e) => handleItemChange(index, 'productId', e.target.value)}
-                style={{ marginBottom: 0 }}
+                onChange={(e) => changeItem(i, 'productId', e.target.value)}
               />
             </div>
-            <div style={{ flex: 1 }}>
-              <label style={{ fontSize: '0.75rem', color: '#64748b', display: 'block' }}>수량</label>
+            <div style={{ width: '80px' }}>
+              <label>수량</label>
               <input
                 type="number"
-                placeholder="수량"
+                placeholder="1"
                 value={item.quantity}
-                onChange={(e) => handleItemChange(index, 'quantity', e.target.value)}
+                onChange={(e) => changeItem(i, 'quantity', e.target.value)}
                 min="1"
-                style={{ marginBottom: 0 }}
               />
             </div>
-            <button 
-              type="button" 
-              onClick={() => handleRemoveItem(index)}
-              style={{ 
-                marginTop: '1.2rem', 
-                background: '#fee2e2', 
-                color: '#ef4444', 
-                padding: '0.5rem',
-                minWidth: '40px'
-              }}
-            >
-              삭제
-            </button>
+            {items.length > 1 && (
+              <button
+                type="button"
+                className="btn-danger"
+                onClick={() => removeItem(i)}
+                style={{ padding: '0.6rem 0.75rem', fontSize: '0.8rem', alignSelf: 'flex-end' }}
+              >
+                삭제
+              </button>
+            )}
           </div>
         ))}
-        
-        <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
-          <button 
-            type="button" 
-            onClick={handleAddItem}
-            style={{ flex: 1, background: '#f1f5f9', color: '#475569' }}
-          >
+
+        <div className="order-form-actions">
+          <button type="button" className="btn-secondary" onClick={addItem} style={{ flex: 1 }}>
             + 상품 추가
           </button>
-          <button 
-            type="submit" 
-            disabled={loading} 
-            style={{ flex: 2 }}
-          >
-            {loading ? '주문 처리 중...' : '지금 바로 주문하기'}
+          <button type="submit" disabled={loading} style={{ flex: 2 }}>
+            {loading ? '처리 중...' : '지금 주문하기 →'}
           </button>
         </div>
       </form>
-      
-      <div style={{ marginTop: '1.5rem' }} dangerouslySetInnerHTML={{ __html: result }} />
+
+      {result && (
+        <div style={{ marginTop: '1.25rem' }} className={result.ok ? 'success-box' : 'error-box'}>
+          {result.ok ? '✅' : '⚠️'} {result.msg}
+        </div>
+      )}
     </div>
   );
 }

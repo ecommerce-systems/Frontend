@@ -4,11 +4,13 @@ import UserProfileUpdate from '../components/user/UserProfileUpdate';
 
 function UserPage() {
   return (
-    <div>
-      <div style={{ marginBottom: '2rem' }}>
+    <div className="fade-in">
+      <div className="page-header">
+        <span className="page-header-icon">👤</span>
         <h1>마이페이지</h1>
-        <p style={{ color: 'var(--text-muted)' }}>회원님의 프로필 정보 확인 및 수정을 진행할 수 있습니다.</p>
+        <p className="page-subtitle">회원 정보를 확인하고 프로필을 수정할 수 있습니다.</p>
       </div>
+
       <div className="container">
         <div className="card">
           <UserProfile />

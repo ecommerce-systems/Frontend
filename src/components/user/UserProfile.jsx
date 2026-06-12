@@ -7,49 +7,51 @@ function UserProfile() {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    const fetchUserProfile = async () => {
-      try {
-        const response = await axiosInstance.get('/api/v1/users/me');
-        setUser(response.data);
-      } catch (err) {
-        setError('사용자 프로필을 가져오는데 실패했습니다. 로그인이 필요합니다.');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchUserProfile();
+    axiosInstance.get('/api/v1/users/me')
+      .then(res => setUser(res.data))
+      .catch(() => setError('프로필을 불러오지 못했습니다. 로그인이 필요합니다.'))
+      .finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <p style={{ color: 'var(--text-muted)' }}>프로필 불러오는 중...</p>;
-  if (error) return <p style={{ color: 'var(--error-color)', padding: '1rem', background: '#fef2f2', borderRadius: '8px' }}>{error}</p>;
+  if (loading) return (
+    <div className="loading-state" style={{ padding: '2rem' }}>
+      <div className="spinner" />
+    </div>
+  );
+
+  if (error) return <div className="error-box">⚠️ {error}</div>;
+  if (!user)  return null;
+
+  const initial = (user.name || user.username || '?')[0].toUpperCase();
+
+  const rows = [
+    { label: '아이디',   value: user.username },
+    { label: '이름',     value: user.name },
+    { label: '전화번호', value: user.phone },
+    { label: '주소',     value: user.address },
+  ];
 
   return (
     <div>
-      <h3 style={{ marginBottom: '1.5rem' }}>내 프로필 정보</h3>
-      {user ? (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.8rem' }}>
-          <div style={{ display: 'flex', borderBottom: '1px solid #f1f5f9', paddingBottom: '0.5rem' }}>
-            <span style={{ width: '100px', fontWeight: 600, color: 'var(--text-muted)' }}>아이디</span>
-            <span>{user.username}</span>
-          </div>
-          <div style={{ display: 'flex', borderBottom: '1px solid #f1f5f9', paddingBottom: '0.5rem' }}>
-            <span style={{ width: '100px', fontWeight: 600, color: 'var(--text-muted)' }}>이름</span>
-            <span>{user.name}</span>
-          </div>
-          <div style={{ display: 'flex', borderBottom: '1px solid #f1f5f9', paddingBottom: '0.5rem' }}>
-            <span style={{ width: '100px', fontWeight: 600, color: 'var(--text-muted)' }}>전화번호</span>
-            <span>{user.phone}</span>
-          </div>
-          <div style={{ display: 'flex', borderBottom: '1px solid #f1f5f9', paddingBottom: '0.5rem' }}>
-            <span style={{ width: '100px', fontWeight: 600, color: 'var(--text-muted)' }}>주소</span>
-            <span>{user.address}</span>
-          </div>
+      <h3 style={{ marginBottom: '1.5rem' }}>내 프로필</h3>
+
+      <div className="profile-header">
+        <div className="profile-avatar">{initial}</div>
+        <div className="profile-header-info">
+          <div className="profile-username">{user.name}</div>
+          <div className="profile-handle">@{user.username}</div>
         </div>
-      ) : (
-        <p>사용자 정보를 찾을 수 없습니다.</p>
-      )}
+        <span className="badge badge-success">활성</span>
+      </div>
+
+      <div className="profile-rows">
+        {rows.map(({ label, value }) => (
+          <div key={label} className="profile-row">
+            <span className="profile-label">{label}</span>
+            <span className="profile-value">{value || '—'}</span>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }
