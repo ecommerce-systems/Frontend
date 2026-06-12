@@ -8,7 +8,8 @@ function ProductList({ products }) {
 
   if (!products || products.length === 0) {
     return (
-      <div style={{ textAlign: 'center', padding: '2rem', color: '#64748b' }}>
+      <div className="empty-state">
+        <div className="empty-state-icon">🔍</div>
         <p>검색 결과와 일치하는 상품이 없습니다.</p>
       </div>
     );
@@ -16,64 +17,44 @@ function ProductList({ products }) {
 
   return (
     <div>
-      <h3 style={{ marginBottom: '1.5rem' }}>판매 중인 상품</h3>
-      <div className="product-list">
+      <h3>판매 중인 상품 <span style={{ color: 'var(--text-muted)', fontSize: '0.85rem', fontWeight: 400 }}>({products.length}개)</span></h3>
+      <div className="product-grid">
         {products.map((product) => (
-          <div key={product.productId} className="product-card" style={{ cursor: 'pointer' }}>
-            <div 
+          <div key={product.productId} className="product-card">
+            <div
+              className="product-image-area"
               onClick={() => navigate(`/products/${product.productId}`)}
-              style={{ 
-                height: '180px', 
-                background: '#f1f5f9', 
-                borderRadius: '8px',
-                overflow: 'hidden',
-                marginBottom: '1rem',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center'
-              }}
             >
               {product.imageUrl ? (
-                <img 
-                  src={product.imageUrl} 
-                  alt={product.prodName} 
-                  style={{ 
-                    width: '100%', 
-                    height: '100%', 
-                    objectFit: 'cover' 
-                  }}
-                  onError={(e) => {
-                    e.target.src = 'https://via.placeholder.com/180x180?text=No+Image';
-                  }}
+                <img
+                  src={product.imageUrl}
+                  alt={product.prodName}
+                  onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }}
                 />
-              ) : (
-                <div style={{ color: '#94a3b8', fontSize: '0.875rem' }}>이미지 없음</div>
-              )}
-            </div>
-            <div onClick={() => navigate(`/products/${product.productId}`)}>
-              <h4 style={{ 
-                margin: '0 0 0.5rem 0', 
-                fontSize: '1rem',
-                overflow: 'hidden',
-                textOverflow: 'ellipsis',
-                whiteSpace: 'nowrap'
-              }} title={product.prodName}>
-                {product.prodName}
-              </h4>
-              <div className="product-price">
-                ₩{product.price?.toLocaleString()}
+              ) : null}
+              <div className="product-no-image" style={{ display: product.imageUrl ? 'none' : 'flex' }}>
+                <div className="product-no-image-icon">📦</div>
+                <span>이미지 없음</span>
               </div>
             </div>
-            <div style={{ marginTop: '1rem' }}>
-              <button 
-                style={{ width: '100%', fontSize: '0.875rem', padding: '0.5rem' }}
+
+            <div
+              className="product-info"
+              onClick={() => navigate(`/products/${product.productId}`)}
+            >
+              <p className="product-name" title={product.prodName}>{product.prodName}</p>
+              <div className="product-price">₩{product.price?.toLocaleString()}</div>
+            </div>
+
+            <div className="product-card-footer">
+              <button
                 onClick={(e) => {
                   e.stopPropagation();
                   addToCart(product);
                   alert('장바구니에 추가되었습니다!');
                 }}
               >
-                장바구니 담기
+                + 장바구니 담기
               </button>
             </div>
           </div>
