@@ -1,23 +1,29 @@
-import React, { useState } from "react";
+import React, { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import axiosInstance from "../../api";
 import { useCart } from "../../context/CartContext";
 
 const SearchIcon = () => (
-  <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+  <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
     <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
   </svg>
 );
 
 function CoPurchaseList() {
-  const [productId,  setProductId]  = useState("");
+  const [productId,   setProductId]   = useState("");
   const [coPurchases, setCoPurchases] = useState([]);
-  const [loading,    setLoading]    = useState(false);
-  const [error,      setError]      = useState("");
+  const [loading,     setLoading]     = useState(false);
+  const [error,       setError]       = useState("");
   const [hasSearched, setHasSearched] = useState(false);
+  const [toastId,     setToastId]     = useState(null);
 
   const navigate = useNavigate();
   const { addToCart } = useCart();
+
+  const showToast = useCallback((id) => {
+    setToastId(id);
+    setTimeout(() => setToastId(null), 1800);
+  }, []);
 
   const fetchCoPurchases = async () => {
     if (!productId.trim()) { setError("상품 ID를 입력해주세요."); return; }
@@ -42,21 +48,19 @@ function CoPurchaseList() {
         상품 ID로 검색하면 함께 많이 구매된 상품을 추천해드립니다.
       </p>
 
-      <div className="search-wrapper" style={{ marginBottom: '2rem' }}>
-        <div className="search-input-container">
-          <span className="search-input-icon"><SearchIcon /></span>
+      <div className="search-bar-wrap" style={{ marginBottom: '2rem' }}>
+        <div className="search-input-wrap">
+          <span className="search-ico"><SearchIcon /></span>
           <input
+            className="search-input"
             type="text"
             value={productId}
             onChange={(e) => setProductId(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && fetchCoPurchases()}
             placeholder="상품 ID 입력 (예: 507909001)"
-            style={{ paddingLeft: '2.75rem' }}
           />
         </div>
-        <button onClick={fetchCoPurchases} style={{ flexShrink: 0 }}>
-          <SearchIcon /> 검색
-        </button>
+        <button className="search-btn" onClick={fetchCoPurchases}>검색</button>
       </div>
 
       {error && <div className="error-box" style={{ marginBottom: '1.5rem' }}>⚠️ {error}</div>}
@@ -110,10 +114,10 @@ function CoPurchaseList() {
                   onClick={(e) => {
                     e.stopPropagation();
                     addToCart(product);
-                    alert("장바구니에 추가되었습니다!");
+                    showToast(product.productId);
                   }}
                 >
-                  + 장바구니 담기
+                  {toastId === product.productId ? '✓ 담겼습니다' : '+ 장바구니 담기'}
                 </button>
               </div>
             </div>

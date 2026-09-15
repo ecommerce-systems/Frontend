@@ -12,6 +12,7 @@ function ProductDetailPage() {
   const [loading, setLoading] = useState(true);
   const [recLoading, setRecLoading] = useState(false);
   const [error, setError] = useState('');
+  const [cartAdded, setCartAdded] = useState(false);
 
   useEffect(() => {
     const fetchProduct = async () => {
@@ -155,10 +156,11 @@ function ProductDetailPage() {
               style={{ padding: '1rem', fontSize: '1rem', borderRadius: 'var(--radius-sm)', marginTop: 'auto' }}
               onClick={() => {
                 addToCart(product);
-                alert('장바구니에 추가되었습니다!');
+                setCartAdded(true);
+                setTimeout(() => setCartAdded(false), 1800);
               }}
             >
-              + 장바구니에 담기
+              {cartAdded ? '✓ 장바구니에 담겼습니다' : '+ 장바구니에 담기'}
             </button>
           </div>
         </div>
