@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../../api';
 
 const FIELDS = [
@@ -13,6 +14,7 @@ function SignUp() {
   const [form,    setForm]    = useState({ username: '', password: '', name: '', phone: '', address: '' });
   const [result,  setResult]  = useState(null);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
   const set = (key) => (e) => setForm(f => ({ ...f, [key]: e.target.value }));
 
@@ -22,7 +24,8 @@ function SignUp() {
     setLoading(true);
     try {
       await axiosInstance.post('/api/v2/auth/signup', form);
-      setResult({ ok: true, msg: `${form.username}님, 가입을 축하합니다! 로그인 탭에서 로그인하세요.` });
+      setResult({ ok: true, msg: `${form.username}님, 가입을 축하합니다!` });
+      setTimeout(() => navigate('/'), 1200);
     } catch {
       setResult({ ok: false, msg: '가입에 실패했습니다. 이미 사용 중인 아이디이거나 입력값을 확인해주세요.' });
     } finally {

@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axiosInstance, { setAccessToken } from '../../api';
 
 function Login() {
@@ -6,6 +7,7 @@ function Login() {
   const [password, setPassword] = useState('');
   const [result,   setResult]   = useState(null);
   const [loading,  setLoading]  = useState(false);
+  const navigate = useNavigate();
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -14,7 +16,7 @@ function Login() {
     try {
       const res = await axiosInstance.post('/api/v2/auth/login', { username, password });
       setAccessToken(res.data.accessToken);
-      setResult({ ok: true, msg: `${username}님, 환영합니다!` });
+      navigate('/products');
     } catch {
       setResult({ ok: false, msg: '아이디 또는 비밀번호가 올바르지 않습니다.' });
     } finally {
