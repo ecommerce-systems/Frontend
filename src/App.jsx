@@ -10,6 +10,7 @@ import CoPurchasePage from './pages/CoPurchasePage';
 import ResponseTimeToast from './components/ResponseTimeToast';
 import { CartProvider, useCart } from './context/CartContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
+import RequireAuth from './components/RequireAuth';
 import axiosInstance from './api';
 
 function NavContent() {
@@ -68,9 +69,9 @@ function App() {
               <Route path="/auth"                element={<AuthPage />} />
               <Route path="/products"            element={<ProductPage />} />
               <Route path="/products/:productId" element={<ProductDetailPage />} />
-              <Route path="/orders"              element={<OrderPage />} />
-              <Route path="/user"                element={<UserPage />} />
-              <Route path="/co-purchase"         element={<CoPurchasePage />} />
+              <Route path="/orders"              element={<RequireAuth><OrderPage /></RequireAuth>} />
+              <Route path="/user"                element={<RequireAuth><UserPage /></RequireAuth>} />
+              <Route path="/co-purchase"         element={<RequireAuth><CoPurchasePage /></RequireAuth>} />
               <Route path="*"                    element={<Navigate to="/" replace />} />
             </Routes>
           </div>
