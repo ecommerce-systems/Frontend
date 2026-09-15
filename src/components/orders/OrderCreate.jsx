@@ -1,48 +1,27 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../../api';
 import { useCart } from '../../context/CartContext';
 
 function OrderCreate({ onOrderCreated }) {
-  const { cartItems, clearCart } = useCart();
-  const [items, setItems] = useState([{ productId: '', quantity: '' }]);
+  const { cartItems, removeFromCart, updateQuantity, clearCart } = useCart();
   const [result, setResult] = useState(null);
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  useEffect(() => {
-    if (cartItems.length > 0) {
-      setItems(cartItems.map(item => ({
-        productId: item.productId.toString(),
-        quantity: item.quantity,
-      })));
-    }
-  }, [cartItems]);
+  const total = cartItems.reduce((sum, item) => sum + (item.price ?? 0) * item.quantity, 0);
 
-  const addItem    = () => setItems(prev => [...prev, { productId: '', quantity: '' }]);
-  const removeItem = (i) => setItems(prev => prev.filter((_, idx) => idx !== i));
-  const changeItem = (i, field, val) =>
-    setItems(prev => prev.map((item, idx) =>
-      idx === i ? { ...item, [field]: field === 'quantity' ? parseInt(val) || '' : val } : item
-    ));
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const handleSubmit = async () => {
+    if (cartItems.length === 0) return;
     setResult(null);
     setLoading(true);
-
-    const orderItems = items
-      .map(it => ({ productId: parseInt(it.productId), quantity: Number(it.quantity) }))
-      .filter(it => !isNaN(it.productId) && it.quantity > 0);
-
-    if (orderItems.length === 0) {
-      setResult({ ok: false, msg: '유효한 상품 ID와 수량을 입력해주세요.' });
-      setLoading(false);
-      return;
-    }
-
+    const orderItems = cartItems.map(item => ({
+      productId: parseInt(item.productId),
+      quantity: item.quantity,
+    }));
     try {
       await axiosInstance.post('/api/v1/orders', { items: orderItems });
-      setResult({ ok: true, msg: '주문이 성공적으로 완료되었습니다!' });
-      setItems([{ productId: '', quantity: '' }]);
+      setResult({ ok: true, msg: '주문이 완료되었습니다!' });
       clearCart();
       onOrderCreated?.();
     } catch (err) {
@@ -52,66 +31,74 @@ function OrderCreate({ onOrderCreated }) {
     }
   };
 
+  if (cartItems.length === 0) {
+    return (
+      <div className="cart-empty">
+        <div className="cart-empty-icon">🛒</div>
+        <p>장바구니가 비어 있습니다.</p>
+        <button className="btn-secondary" onClick={() => navigate('/products')}>
+          상품 둘러보기
+        </button>
+      </div>
+    );
+  }
+
   return (
-    <div>
-      <h3 style={{ marginBottom: '1.5rem' }}>새 주문 작성</h3>
+    <div className="cart-wrap">
+      <h3 className="cart-title">장바구니 <span className="cart-count">{cartItems.length}</span></h3>
 
-      {cartItems.length > 0 && (
-        <div className="cart-info-box">
-          🛒 장바구니 상품 {cartItems.length}개가 자동으로 입력되었습니다.
-        </div>
-      )}
+      <ul className="cart-list">
+        {cartItems.map((item) => (
+          <li key={item.productId} className="cart-item">
+            <div
+              className="cart-item-image"
+              onClick={() => navigate(`/products/${item.productId}`)}
+            >
+              {item.imageUrl ? (
+                <img src={item.imageUrl} alt={item.prodName}
+                  onError={(e) => { e.target.style.display = 'none'; e.target.nextSibling.style.display = 'flex'; }}
+                />
+              ) : null}
+              <div className="cart-item-no-img" style={{ display: item.imageUrl ? 'none' : 'flex' }}>📦</div>
+            </div>
 
-      <form onSubmit={handleSubmit}>
-        {items.map((item, i) => (
-          <div key={i} className="order-item-form-row">
-            <div>
-              <label>상품 ID</label>
-              <input
-                type="text"
-                placeholder="예: 507909001"
-                value={item.productId}
-                onChange={(e) => changeItem(i, 'productId', e.target.value)}
-              />
-            </div>
-            <div style={{ width: '80px' }}>
-              <label>수량</label>
-              <input
-                type="number"
-                placeholder="1"
-                value={item.quantity}
-                onChange={(e) => changeItem(i, 'quantity', e.target.value)}
-                min="1"
-              />
-            </div>
-            {items.length > 1 && (
-              <button
-                type="button"
-                className="btn-danger"
-                onClick={() => removeItem(i)}
-                style={{ padding: '0.6rem 0.75rem', fontSize: '0.8rem', alignSelf: 'flex-end' }}
+            <div className="cart-item-info">
+              <p
+                className="cart-item-name"
+                onClick={() => navigate(`/products/${item.productId}`)}
               >
-                삭제
-              </button>
-            )}
-          </div>
+                {item.prodName ?? `상품 #${item.productId}`}
+              </p>
+              <p className="cart-item-price">₩{(item.price ?? 0).toLocaleString()}</p>
+            </div>
+
+            <div className="cart-item-qty">
+              <button onClick={() => updateQuantity(item.productId, item.quantity - 1)} disabled={item.quantity <= 1}>−</button>
+              <span>{item.quantity}</span>
+              <button onClick={() => updateQuantity(item.productId, item.quantity + 1)}>+</button>
+            </div>
+
+            <p className="cart-item-subtotal">₩{((item.price ?? 0) * item.quantity).toLocaleString()}</p>
+
+            <button className="cart-item-remove" onClick={() => removeFromCart(item.productId)}>✕</button>
+          </li>
         ))}
+      </ul>
 
-        <div className="order-form-actions">
-          <button type="button" className="btn-secondary" onClick={addItem} style={{ flex: 1 }}>
-            + 상품 추가
-          </button>
-          <button type="submit" disabled={loading} style={{ flex: 2 }}>
-            {loading ? '처리 중...' : '지금 주문하기 →'}
-          </button>
+      <div className="cart-footer">
+        <div className="cart-total">
+          <span>합계</span>
+          <strong>₩{total.toLocaleString()}</strong>
         </div>
-      </form>
-
-      {result && (
-        <div style={{ marginTop: '1.25rem' }} className={result.ok ? 'success-box' : 'error-box'}>
-          {result.ok ? '✅' : '⚠️'} {result.msg}
-        </div>
-      )}
+        {result && (
+          <div className={result.ok ? 'success-box' : 'error-box'} style={{ marginBottom: '0.75rem' }}>
+            {result.ok ? '✅' : '⚠️'} {result.msg}
+          </div>
+        )}
+        <button className="cart-order-btn" onClick={handleSubmit} disabled={loading}>
+          {loading ? '처리 중...' : `₩${total.toLocaleString()} 주문하기`}
+        </button>
+      </div>
     </div>
   );
 }

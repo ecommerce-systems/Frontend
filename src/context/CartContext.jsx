@@ -23,10 +23,17 @@ export const CartProvider = ({ children }) => {
     setCartItems((prev) => prev.filter((item) => item.productId !== productId));
   };
 
+  const updateQuantity = (productId, quantity) => {
+    if (quantity < 1) return;
+    setCartItems((prev) =>
+      prev.map((item) => item.productId === productId ? { ...item, quantity } : item)
+    );
+  };
+
   const clearCart = () => setCartItems([]);
 
   return (
-    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, clearCart }}>
+    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, updateQuantity, clearCart }}>
       {children}
     </CartContext.Provider>
   );
