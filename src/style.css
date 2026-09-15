@@ -1501,6 +1501,53 @@ button.btn-success {
   gap: 0;
 }
 
+.quick-start-btn {
+  width: 100%;
+  padding: 0.875rem;
+  background: #111;
+  color: #fff;
+  border: none;
+  border-radius: var(--radius-sm);
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 0.75rem;
+  transition: background 0.15s;
+}
+
+.quick-start-btn:hover:not(:disabled) {
+  background: #333;
+}
+
+.quick-start-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.quick-start-error {
+  font-size: 0.82rem;
+  color: var(--error);
+  margin-bottom: 0.75rem;
+  text-align: center;
+}
+
+.auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1.25rem;
+  color: var(--text-muted);
+  font-size: 0.82rem;
+}
+
+.auth-divider::before,
+.auth-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
 /* Tab switcher */
 .auth-tabs {
   display: flex;
