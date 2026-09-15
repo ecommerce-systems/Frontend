@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import ProductList from "../components/products/ProductList";
 import ProductSearch from "../components/products/ProductSearch";
 import { searchProductsPaginated } from "../api";
@@ -12,12 +12,6 @@ function ProductPage() {
   const [totalPages,    setTotalPages]    = useState(0);
 
   const handleSearch = async (kw, page = 0) => {
-    if (!kw) {
-      setSearchResults([]);
-      setTotalPages(0);
-      setCurrentPage(0);
-      return;
-    }
     setLoading(true);
     setError("");
     try {
@@ -33,6 +27,10 @@ function ProductPage() {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    handleSearch("");
+  }, []);
 
   const handlePaginate = (p) => {
     if (p >= 0 && p < totalPages) handleSearch(keyword, p);
@@ -93,11 +91,11 @@ function ProductPage() {
         </div>
       )}
 
-      {!loading && !error && searchResults.length === 0 && keyword === '' && (
+      {!loading && !error && searchResults.length === 0 && (
         <div className="empty-state" style={{ marginTop: '2rem' }}>
           <span className="empty-state-icon">🔍</span>
-          <h4>검색어를 입력해주세요</h4>
-          <p>상품명, 브랜드, 카테고리로 검색할 수 있어요.</p>
+          <h4>검색 결과가 없습니다</h4>
+          <p>다른 검색어로 다시 시도해보세요.</p>
         </div>
       )}
     </div>
