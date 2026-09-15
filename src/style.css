@@ -179,6 +179,14 @@ body::after {
   color: white !important;
 }
 
+.nav-logout-btn {
+  border: none;
+  cursor: pointer;
+  font-size: inherit;
+  font-family: inherit;
+  padding: 0.45rem 1rem;
+}
+
 .nav-cart-badge {
   display: inline-flex;
   align-items: center;
