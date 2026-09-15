@@ -943,6 +943,44 @@ button.btn-success {
   font-weight: 700;
 }
 
+/* ===== REQUIRE AUTH ===== */
+.require-auth-screen {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 60vh;
+  padding: 2rem;
+}
+
+.require-auth-box {
+  background: white;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 2.5rem 2rem;
+  width: 100%;
+  max-width: 360px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.require-auth-icon {
+  font-size: 2.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.require-auth-box h3 {
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.require-auth-box p {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  margin-bottom: 0.25rem;
+}
+
 /* ===== USER PROFILE ===== */
 .profile-avatar {
   width: 64px;

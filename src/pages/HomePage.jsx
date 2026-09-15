@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import axiosInstance from '../api';
+import { useAuth } from '../context/AuthContext';
 
 const FEATURES = [
   {
@@ -38,6 +40,28 @@ const FEATURES = [
 
 function HomePage() {
   const navigate = useNavigate();
+  const { isLoggedIn, login } = useAuth();
+  const [quickLoading, setQuickLoading] = useState(false);
+
+  const handleQuickStart = async () => {
+    if (isLoggedIn) { navigate('/products'); return; }
+    setQuickLoading(true);
+    const suffix = Math.random().toString(36).slice(2, 7);
+    const username = `guest_${suffix}`;
+    const password = 'Guest@1234';
+    try {
+      await axiosInstance.post('/api/v2/auth/signup', {
+        username, password, name: '게스트', phone: '010-0000-0000', address: '서울시 강남구',
+      });
+      const res = await axiosInstance.post('/api/v2/auth/login', { username, password });
+      login(res.data.accessToken);
+      navigate('/products');
+    } catch {
+      navigate('/auth');
+    } finally {
+      setQuickLoading(false);
+    }
+  };
 
   return (
     <div className="home-page fade-in">
@@ -60,8 +84,8 @@ function HomePage() {
           <button className="hero-btn-primary" onClick={() => navigate('/products')}>
             🛍️ 상품 둘러보기
           </button>
-          <button className="hero-btn-secondary" onClick={() => navigate('/auth')}>
-            로그인하기 →
+          <button className="hero-btn-secondary" onClick={handleQuickStart} disabled={quickLoading}>
+            {quickLoading ? '시작 중...' : '⚡ 빠르게 시작하기'}
           </button>
         </div>
 
@@ -128,11 +152,8 @@ function HomePage() {
             <h2 className="cta-title">지금 바로 시작해볼까요?</h2>
             <p className="cta-subtitle">무료로 가입하고 다양한 혜택을 누리세요.</p>
           </div>
-          <button
-            className="cta-btn"
-            onClick={() => navigate('/auth')}
-          >
-            무료로 시작하기 →
+          <button className="cta-btn" onClick={handleQuickStart} disabled={quickLoading}>
+            {quickLoading ? '시작 중...' : '⚡ 빠르게 시작하기 →'}
           </button>
         </div>
       </section>

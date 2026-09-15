@@ -1,10 +1,16 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
 
 function ProductList({ products }) {
   const navigate = useNavigate();
   const { addToCart } = useCart();
+  const [toastId, setToastId] = useState(null);
+
+  const showToast = useCallback((productId) => {
+    setToastId(productId);
+    setTimeout(() => setToastId(null), 1800);
+  }, []);
 
   if (!products || products.length === 0) {
     return (
@@ -51,10 +57,10 @@ function ProductList({ products }) {
                 onClick={(e) => {
                   e.stopPropagation();
                   addToCart(product);
-                  alert('장바구니에 추가되었습니다!');
+                  showToast(product.productId);
                 }}
               >
-                + 장바구니 담기
+                {toastId === product.productId ? '✓ 담겼습니다' : '+ 장바구니 담기'}
               </button>
             </div>
           </div>
