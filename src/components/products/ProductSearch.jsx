@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { searchProductNames } from "../../api";
 import useDebounce from "../../hooks/useDebounce";
 
 const SearchIcon = () => (
-  <svg width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+  <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2.5}>
     <path strokeLinecap="round" strokeLinejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
   </svg>
 );
@@ -11,42 +11,59 @@ const SearchIcon = () => (
 function ProductSearch({ onSearch, keyword, setKeyword }) {
   const [suggestions, setSuggestions] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [open, setOpen] = useState(false);
   const debouncedKeyword = useDebounce(keyword, 300);
+  const skipNextRef = useRef(false);
 
   useEffect(() => {
-    if (debouncedKeyword) {
-      setLoading(true);
-      searchProductNames(debouncedKeyword)
-        .then((response) => setSuggestions(response.data))
-        .catch(() => setSuggestions([]))
-        .finally(() => setLoading(false));
-    } else {
-      setSuggestions([]);
+    if (skipNextRef.current) {
+      skipNextRef.current = false;
+      return;
     }
+    if (!debouncedKeyword.trim()) {
+      setSuggestions([]);
+      setOpen(false);
+      return;
+    }
+    setLoading(true);
+    searchProductNames(debouncedKeyword)
+      .then((response) => {
+        const unique = [...new Set(response.data)];
+        setSuggestions(unique);
+        setOpen(unique.length > 0);
+      })
+      .catch(() => {
+        setSuggestions([]);
+        setOpen(false);
+      })
+      .finally(() => setLoading(false));
   }, [debouncedKeyword]);
 
   const handleKeyDown = (e) => {
     if (e.key === "Enter") {
       onSearch(keyword);
       setSuggestions([]);
+      setOpen(false);
     }
     if (e.key === "Escape") {
       setSuggestions([]);
+      setOpen(false);
     }
   };
 
   const handleSuggestionClick = (suggestion) => {
+    skipNextRef.current = true;
     setKeyword(suggestion);
     onSearch(suggestion);
     setSuggestions([]);
+    setOpen(false);
   };
 
   return (
-    <div>
-      <h3 style={{ marginBottom: '1.25rem' }}>상품 통합 검색</h3>
-      <div className="search-wrapper">
-        <div className="search-input-container">
-          <span className="search-input-icon">
+    <div className="search-section">
+      <div className="search-bar-wrap">
+        <div className="search-input-wrap">
+          <span className="search-ico">
             <SearchIcon />
           </span>
           <input
@@ -54,24 +71,40 @@ function ProductSearch({ onSearch, keyword, setKeyword }) {
             value={keyword}
             onChange={(e) => setKeyword(e.target.value)}
             onKeyDown={handleKeyDown}
-            placeholder="상품명, 브랜드, 카테고리 등으로 검색..."
-            style={{ paddingLeft: '2.75rem' }}
+            onBlur={() => setTimeout(() => setOpen(false), 120)}
+            onFocus={() => suggestions.length > 0 && setOpen(true)}
+            placeholder="찾으시는 상품을 검색해보세요"
+            className="search-input"
           />
-
-          {suggestions.length > 0 && (
-            <ul className="search-suggestions">
-              {suggestions.map((suggestion, index) => (
-                <li key={index} onClick={() => handleSuggestionClick(suggestion)}>
-                  {suggestion}
+          {keyword && (
+            <button
+              className="search-clear-btn"
+              onMouseDown={(e) => {
+                e.preventDefault();
+                setKeyword("");
+                setSuggestions([]);
+                setOpen(false);
+              }}
+            >
+              ×
+            </button>
+          )}
+          {open && suggestions.length > 0 && (
+            <ul className="suggest-list">
+              {suggestions.map((s, i) => (
+                <li key={i} onMouseDown={() => handleSuggestionClick(s)} className="suggest-item">
+                  <SearchIcon />
+                  <span>{s}</span>
                 </li>
               ))}
             </ul>
           )}
         </div>
-
-        <button onClick={() => { onSearch(keyword); setSuggestions([]); }} style={{ flexShrink: 0 }}>
-          <SearchIcon />
-          {loading ? '검색 중...' : '검색'}
+        <button
+          className="search-btn"
+          onClick={() => { onSearch(keyword); setSuggestions([]); setOpen(false); }}
+        >
+          {loading ? "검색 중" : "검색"}
         </button>
       </div>
     </div>
