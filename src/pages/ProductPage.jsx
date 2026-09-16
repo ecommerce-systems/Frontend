@@ -6,7 +6,7 @@ import { searchProductsPaginated } from "../api";
 function ProductPage() {
   const [searchResults, setSearchResults] = useState([]);
   const [keyword,       setKeyword]       = useState("");
-  const [loading,       setLoading]       = useState(false);
+  const [loading,       setLoading]       = useState(true);
   const [error,         setError]         = useState("");
   const [currentPage,   setCurrentPage]   = useState(0);
   const [totalPages,    setTotalPages]    = useState(0);
@@ -48,8 +48,7 @@ function ProductPage() {
         <ProductSearch keyword={keyword} setKeyword={setKeyword} onSearch={handleSearch} />
       </div>
 
-      {(loading || error || searchResults.length > 0) && (
-        <div className="card">
+      <div className="card">
           {loading && (
             <div className="loading-state">
               <div className="spinner" />
@@ -88,16 +87,14 @@ function ProductPage() {
               )}
             </>
           )}
-        </div>
-      )}
-
-      {!loading && !error && searchResults.length === 0 && (
-        <div className="empty-state" style={{ marginTop: '2rem' }}>
-          <span className="empty-state-icon">🔍</span>
-          <h4>검색 결과가 없습니다</h4>
-          <p>다른 검색어로 다시 시도해보세요.</p>
-        </div>
-      )}
+        {!loading && !error && searchResults.length === 0 && (
+          <div className="empty-state">
+            <span className="empty-state-icon">🔍</span>
+            <h4>검색 결과가 없습니다</h4>
+            <p>다른 검색어로 다시 시도해보세요.</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }
