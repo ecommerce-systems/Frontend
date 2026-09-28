@@ -21,70 +21,36 @@ Spring Boot 백엔드와 연동하는 이커머스 SPA.
 
 ## 📺 화면 구성
 
-| 홈 | 인증 / 빠르게 시작하기 |
+| 검색 자동완성 | 빠르게 시작하기 |
 | :---: | :---: |
-| ![홈](public/screenshots/home.png) | ![인증](public/screenshots/auth.png) |
-| 히어로 섹션, 빠르게 시작하기 CTA | 로그인·회원가입·게스트 계정 원클릭 생성 |
+| ![검색](public/screenshots/search.gif) | ![빠르게시작](public/screenshots/quickstart.gif) |
+| 키워드 입력 → 추천어 → 결과 목록 | 버튼 클릭 한 번으로 자동 로그인 |
 
-| 상품 탐색 | 로그인 필요 화면 |
+| 홈 | 상품 탐색 |
 | :---: | :---: |
-| ![상품탐색](public/screenshots/products.png) | ![보호된 라우트](public/screenshots/require_auth.png) |
-| 전체 상품 페이징 목록, 키워드 자동완성 검색 | 비로그인 시 잠금 화면 + 빠르게 시작하기 |
+| ![홈](public/screenshots/home.png) | ![상품탐색](public/screenshots/products.png) |
+| 히어로 섹션, 서비스 소개 | 전체 상품 페이징 목록 |
+
+| 인증 | 로그인 필요 화면 |
+| :---: | :---: |
+| ![인증](public/screenshots/auth.png) | ![보호된 라우트](public/screenshots/require_auth.png) |
+| 로그인·회원가입 폼 | 비로그인 시 잠금 화면 |
 
 ---
 
 ## ⚙ 기술 스택
 
-<div style="font-size:24px;margin-bottom:8px;">Frontend</div>
+**Frontend**
 
-<div style="display:flex;gap:8px;">
-  <div style="text-align:center;">
-    <img src="https://skillicons.dev/icons?i=react" width="80"/>
-    <h3>React 19</h3>
-  </div>
-  <div style="text-align:center;">
-    <img src="https://skillicons.dev/icons?i=vite" width="80"/>
-    <h3>Vite 7</h3>
-  </div>
-  <div style="text-align:center;">
-    <img src="https://skillicons.dev/icons?i=js" width="80"/>
-    <h3>JavaScript</h3>
-  </div>
-  <div style="text-align:center;">
-    <img src="https://skillicons.dev/icons?i=css" width="80"/>
-    <h3>CSS</h3>
-  </div>
-</div>
+[![Frontend](https://skillicons.dev/icons?i=react,vite,js,css)](https://skillicons.dev)
 
-<div style="font-size:24px;margin:16px 0 8px;">Backend (연동)</div>
+**Backend (연동)**
 
-<div style="display:flex;gap:8px;">
-  <div style="text-align:center;">
-    <img src="https://skillicons.dev/icons?i=spring" width="80"/>
-    <h3>Spring Boot</h3>
-  </div>
-  <div style="text-align:center;">
-    <img src="https://skillicons.dev/icons?i=java" width="80"/>
-    <h3>Java</h3>
-  </div>
-</div>
+[![Backend](https://skillicons.dev/icons?i=spring,java)](https://skillicons.dev)
 
-<div style="font-size:24px;margin:16px 0 8px;">Infra</div>
+**Infra**
 
-<div style="display:flex;gap:8px;">
-  <div style="text-align:center;">
-    <img src="https://skillicons.dev/icons?i=nginx" width="80"/>
-    <h3>Nginx</h3>
-  </div>
-  <div style="text-align:center;">
-    <img src="https://skillicons.dev/icons?i=docker" width="80"/>
-    <h3>Docker</h3>
-  </div>
-  <div style="text-align:center;">
-    <img src="https://skillicons.dev/icons?i=githubactions" width="80"/>
-    <h3>GitHub Actions</h3>
-  </div>
-</div>
+[![Infra](https://skillicons.dev/icons?i=nginx,docker,githubactions)](https://skillicons.dev)
 
 ---
 
